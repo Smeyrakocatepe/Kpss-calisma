@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KPSS">
+<title>KPSS Çalışma</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --bg: #0f0f13;
+  --surface: #1a1a22;
+  --surface2: #22222e;
+  --border: #2e2e3e;
+  --text: #f0eff8;
+  --muted: #6b6a80;
+  --accent: #7c6cfc;
+  --accent2: #fc6c8f;
+  --green: #4ecb8d;
+  --red: #fc5c5c;
+  --yellow: #fcc04e;
+  --turkce: #7c6cfc;
+  --matematik: #4ecb8d;
+  --tarih: #fc6c8f;
+  --cografya: #4eb8fc;
+  --vatandaslik: #fcc04e;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1,h2,h3 { font-family: 'Syne', sans-serif; }
+
+/* SCREENS */
+.screen { display:none; min-height:100vh; flex-direction:column; }
+.screen.active { display:flex; }
+
+/* ── ANA MENÜ ── */
+#screen-menu {
+  background: var(--bg);
+  padding: 0;
+}
+
+.menu-hero {
+  padding: 60px 24px 32px;
+  background: linear-gradient(160deg, #1a1230 0%, var(--bg) 60%);
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-hero::before {
+  content:'';
+  position:absolute;
+  top:-60px; right:-60px;
+  width:220px; height:220px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(124,108,252,0.18) 0%, transparent 70%);
+}
+
+.app-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.menu-title {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.menu-title span { color: var(--accent); }
+
+.menu-subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 20px 24px;
+  margin-bottom: 4px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 12px;
+  text-align: center;
+}
+
+.stat-card .val {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  color: var(--accent);
+}
+
+.stat-card .lbl {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.section-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: 'Syne', sans-serif;
+  padding: 0 24px;
+  margin-bottom: 12px;
+  margin-top: 8px;
+}
+
+.mode-cards {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.mode-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.mode-card:active { transform: scale(0.97); }
+.mode-card:hover { border-color: var(--accent); background: var(--surface2); }
+
+.mode-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.mode-info { flex: 1; }
+.mode-name { font-size: 15px; font-weight: 500; margin-bottom: 2px; }
+.mode-desc { font-size: 12px; color: var(--muted); }
+.mode-arrow { color: var(--muted); font-size: 18px; }
+
+.yanlislar-badge {
+  background: var(--red);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-left: 6px;
+}
+
+/* ── DERS SEÇİMİ ── */
+#screen-dersler {
+  background: var(--bg);
+  padding: 60px 24px 40px;
+}
+
+.back-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: none; border: none;
+  color: var(--muted); font-size: 14px;
+  cursor: pointer; padding: 0;
+  margin-bottom: 28px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.screen-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.screen-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+.ders-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ders-card {
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+
+.ders-card:active { transform: scale(0.97); }
+
+.ders-card-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.1);
+}
+
+.ders-card-info { flex: 1; }
+.ders-card-name { font-size: 16px; font-weight: 600; font-family: 'Syne', sans-serif; }
+.ders-card-count { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+.ders-card-progress {
+  width: 100%; height: 3px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.ders-card-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.6);
+  transition: width 0.5s;
+}
+
+.ders-turkce   { background: rgba(124,108,252,0.15); border-color: rgba(124,108,252,0.3); color: #c4bcff; }
+.ders-matematik { background: rgba(78,203,141,0.15); border-color: rgba(78,203,141,0.3); color: #9fe8c4; }
+.ders-tarih    { background: rgba(252,108,143,0.15); border-color: rgba(252,108,143,0.3); color: #ffc0d0; }
+.ders-cografya { background: rgba(78,184,252,0.15); border-color: rgba(78,184,252,0.3); color: #b0dcff; }
+.ders-vatandaslik { background: rgba(252,192,78,0.15); border-color: rgba(252,192,78,0.3); color: #ffe4a0; }
+
+/* ── TEST EKRANI ── */
+#screen-test {
+  background: var(--bg);
+  flex-direction: column;
+}
+
+.test-header {
+  padding: 50px 24px 20px;
+  position: relative;
+}
+
+.test-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.test-ders-badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-family: 'Syne', sans-serif;
+}
+
+.test-sayac {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.test-progress-bar {
+  width: 100%; height: 4px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.test-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+.test-body {
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.soru-no {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-family: 'Syne', sans-serif;
+}
+
+.soru-text {
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 400;
+  margin-bottom: 28px;
+  flex: 1;
+}
+
+.secenekler {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.secenek {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+  text-align: left;
+}
+
+.secenek:active { transform: scale(0.98); }
+
+.secenek-harf {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+  font-family: 'Syne', sans-serif;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+
+.secenek.dogru {
+  background: rgba(78,203,141,0.15);
+  border-color: var(--green);
+}
+.secenek.dogru .secenek-harf {
+  background: var(--green);
+  color: #0f2419;
+}
+
+.secenek.yanlis {
+  background: rgba(252,92,92,0.15);
+  border-color: var(--red);
+}
+.secenek.yanlis .secenek-harf {
+  background: var(--red);
+  color: white;
+}
+
+.secenek.secildi-dogru {
+  background: rgba(78,203,141,0.2);
+  border-color: var(--green);
+}
+
+.secenek.disabled { cursor: default; }
+
+.test-footer {
+  padding: 20px 24px 40px;
+}
+
+.btn-sonraki {
+  width: 100%;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Syne', sans-serif;
+  cursor: pointer;
+  display: none;
+  transition: all 0.2s;
+}
+
+.btn-sonraki:active { transform: scale(0.97); }
+
+/* ── SONUÇ EKRANI ── */
+#screen-sonuc {
+  background: var(--bg);
+  padding: 60px 24px 40px;
+  align-items: center;
+  text-align: center;
+}
+
+.sonuc-emoji {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.sonuc-puan {
+  font-size: 72px;
+  font-weight: 800;
+  font-family: 'Syne', sans-serif;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.sonuc-label {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+.sonuc-detay {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.sonuc-stat { text-align: center; }
+.sonuc-stat-val { font-size: 24px; font-weight: 700; font-family: 'Syne', sans-serif; }
+.sonuc-stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.val-dogru { color: var(--green); }
+.val-yanlis { color: var(--red); }
+.val-bos { color: var(--yellow); }
+
+.btn-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-primary {
+  width: 100%;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Syne', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary {
+  width: 100%;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 15px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:active, .btn-secondary:active { transform: scale(0.97); }
+
+/* ── DENEME SINAVI ── */
+#screen-deneme {
+  background: var(--bg);
+  padding: 60px 24px 40px;
+}
+
+.deneme-timer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.timer-val {
+  font-size: 48px;
+  font-weight: 800;
+  font-family: 'Syne', sans-serif;
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+
+.timer-lbl {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.timer-kirmizi { color: var(--red) !important; }
+
+.deneme-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.deneme-info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+}
+
+.deneme-info-val { font-size: 20px; font-weight: 700; font-family: 'Syne', sans-serif; color: var(--accent); }
+.deneme-info-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ── İSTATİSTİK ── */
+#screen-istatistik {
+  background: var(--bg);
+  padding: 60px 24px 40px;
+}
+
+.istat-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.istat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 20px;
+}
+
+.istat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.istat-ders { font-size: 14px; font-weight: 600; font-family: 'Syne', sans-serif; }
+.istat-oran { font-size: 13px; font-weight: 600; }
+
+.istat-bar {
+  width: 100%; height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.istat-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.8s ease;
+}
+
+.istat-alt {
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.istat-alt span { display: flex; align-items: center; gap: 4px; }
+.dot-g { width:7px; height:7px; border-radius:50%; background:var(--green); }
+.dot-r { width:7px; height:7px; border-radius:50%; background:var(--red); }
+
+/* ── YANLIŞ SORULAR ── */
+#screen-yanlislar {
+  background: var(--bg);
+  padding: 60px 24px 40px;
+}
+
+.bos-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  color: var(--muted);
+}
+
+.bos-emoji { font-size: 48px; margin-bottom: 12px; }
+.bos-text { font-size: 15px; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.screen.active { animation: fadeUp 0.3s ease; }
+
+.secenek { animation: fadeUp 0.25s ease both; }
+.secenek:nth-child(1) { animation-delay: 0.05s; }
+.secenek:nth-child(2) { animation-delay: 0.1s; }
+.secenek:nth-child(3) { animation-delay: 0.15s; }
+.secenek:nth-child(4) { animation-delay: 0.2s; }
+</style>
+</head>
+<body>
+
+<!-- ── ANA MENÜ ── -->
+<div id="screen-menu" class="screen active">
+  <div class="menu-hero">
+    <div class="app-label">KPSS Çalışma</div>
+    <h1 class="menu-title">Başarıya<br><span>hazırlan.</span></h1>
+    <p class="menu-subtitle">Konu bazlı testler · Deneme sınavı · İstatistik</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="val" id="stat-toplam-soru">50</div>
+      <div class="lbl">Toplam Soru</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" id="stat-cozulen">0</div>
+      <div class="lbl">Çözülen</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" id="stat-yanlis-sayi">0</div>
+      <div class="lbl">Yanlış</div>
+    </div>
+  </div>
+
+  <div class="section-label">Mod Seç</div>
+  <div class="mode-cards">
+    <div class="mode-card" onclick="showDersler()">
+      <div class="mode-icon" style="background:rgba(124,108,252,0.2)">📚</div>
+      <div class="mode-info">
+        <div class="mode-name">Konu Bazlı Test</div>
+        <div class="mode-desc">Ders seçip soru çöz</div>
+      </div>
+      <div class="mode-arrow">›</div>
+    </div>
+    <div class="mode-card" onclick="showDeneme()">
+      <div class="mode-icon" style="background:rgba(252,108,143,0.2)">⏱️</div>
+      <div class="mode-info">
+        <div class="mode-name">Deneme Sınavı</div>
+        <div class="mode-desc">50 soru · 60 dakika · karışık</div>
+      </div>
+      <div class="mode-arrow">›</div>
+    </div>
+    <div class="mode-card" onclick="showYanlislar()">
+      <div class="mode-icon" style="background:rgba(252,92,92,0.2)">🔁</div>
+      <div class="mode-info">
+        <div class="mode-name">Yanlış Sorular
+          <span class="yanlislar-badge" id="yanlis-badge" style="display:none"></span>
+        </div>
+        <div class="mode-desc">Hatalı soruları tekrar çöz</div>
+      </div>
+      <div class="mode-arrow">›</div>
+    </div>
+    <div class="mode-card" onclick="showIstatistik()">
+      <div class="mode-icon" style="background:rgba(78,203,141,0.2)">📊</div>
+      <div class="mode-info">
+        <div class="mode-name">İstatistik</div>
+        <div class="mode-desc">Ders bazlı başarı oranları</div>
+      </div>
+      <div class="mode-arrow">›</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DERS SEÇİMİ ── -->
+<div id="screen-dersler" class="screen">
+  <button class="back-btn" onclick="showMenu()">← Geri</button>
+  <h2 class="screen-title">Ders Seç</h2>
+  <p class="screen-sub">Hangi dersten çalışmak istiyorsun?</p>
+  <div class="ders-grid" id="ders-grid"></div>
+</div>
+
+<!-- ── TEST EKRANI ── -->
+<div id="screen-test" class="screen">
+  <div class="test-header">
+    <div class="test-top">
+      <span class="test-ders-badge" id="test-ders-badge"></span>
+      <span class="test-sayac" id="test-sayac"></span>
+    </div>
+    <div class="test-progress-bar">
+      <div class="test-progress-fill" id="test-progress-fill"></div>
+    </div>
+  </div>
+  <div class="test-body">
+    <div class="soru-no" id="soru-no"></div>
+    <div class="soru-text" id="soru-text"></div>
+    <div class="secenekler" id="secenekler"></div>
+  </div>
+  <div class="test-footer">
+    <button class="btn-sonraki" id="btn-sonraki" onclick="sonraki()">Sonraki Soru →</button>
+  </div>
+</div>
+
+<!-- ── SONUÇ EKRANI ── -->
+<div id="screen-sonuc" class="screen">
+  <div class="sonuc-emoji" id="sonuc-emoji"></div>
+  <div class="sonuc-puan" id="sonuc-puan"></div>
+  <div class="sonuc-label" id="sonuc-label"></div>
+  <div class="sonuc-detay">
+    <div class="sonuc-stat">
+      <div class="sonuc-stat-val val-dogru" id="sonuc-dogru"></div>
+      <div class="sonuc-stat-lbl">Doğru</div>
+    </div>
+    <div class="sonuc-stat">
+      <div class="sonuc-stat-val val-yanlis" id="sonuc-yanlis"></div>
+      <div class="sonuc-stat-lbl">Yanlış</div>
+    </div>
+    <div class="sonuc-stat">
+      <div class="sonuc-stat-val val-bos" id="sonuc-net"></div>
+      <div class="sonuc-stat-lbl">Net</div>
+    </div>
+  </div>
+  <div class="btn-group">
+    <button class="btn-primary" id="btn-tekrar" onclick="tekrar()">Tekrar Çöz</button>
+    <button class="btn-secondary" onclick="showMenu()">Ana Menü</button>
+  </div>
+</div>
+
+<!-- ── DENEME SINAVI ── -->
+<div id="screen-deneme" class="screen">
+  <button class="back-btn" onclick="showMenu()">← Geri</button>
+  <h2 class="screen-title">Deneme Sınavı</h2>
+  <p class="screen-sub">50 soru · 60 dakika · tüm dersler karışık</p>
+  <div class="deneme-timer">
+    <div class="timer-val" id="timer-val">60:00</div>
+    <div class="timer-lbl">Kalan Süre</div>
+  </div>
+  <div class="deneme-info">
+    <div class="deneme-info-card">
+      <div class="deneme-info-val">50</div>
+      <div class="deneme-info-lbl">Toplam Soru</div>
+    </div>
+    <div class="deneme-info-card">
+      <div class="deneme-info-val">60 dk</div>
+      <div class="deneme-info-lbl">Süre</div>
+    </div>
+  </div>
+  <button class="btn-primary" onclick="baslaDeneme()">Sınava Başla</button>
+</div>
+
+<!-- ── İSTATİSTİK ── -->
+<div id="screen-istatistik" class="screen">
+  <button class="back-btn" onclick="showMenu()">← Geri</button>
+  <h2 class="screen-title">İstatistik</h2>
+  <p class="screen-sub">Ders bazlı başarı oranların</p>
+  <div class="istat-grid" id="istat-grid"></div>
+</div>
+
+<!-- ── YANLIŞ SORULAR ── -->
+<div id="screen-yanlislar" class="screen">
+  <button class="back-btn" onclick="showMenu()">← Geri</button>
+  <h2 class="screen-title">Yanlış Sorular</h2>
+  <p class="screen-sub" id="yanlis-sub"></p>
+  <div id="yanlis-content"></div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+//  SORU BANKASI
+// ════════════════════════════════════════
+const SORULAR = [
+  // TÜRKÇE
+  {ders:"Türkçe",konu:"Sözcükte Anlam",soru:'"Gönlü zengin biri" ifadesinde altı çizili sözcük hangi anlamda kullanılmıştır?',secenekler:["Maddi açıdan varlıklı","Cömert ve alicenap","Yetenekli ve başarılı","Sağlıklı ve güçlü"],cevap:1},
+  {ders:"Türkçe",konu:"Cümlede Anlam",soru:"Aşağıdaki cümlelerin hangisinde abartma (mübalağa) sanatı vardır?",secenekler:["Çocuklar bahçede koşup oynuyordu.","Kitabı bir solukta bitirdim.","Sınavda çok zorlandım.","Arkadaşım bana yardım etti."],cevap:1},
+  {ders:"Türkçe",konu:"Paragraf",soru:'Bir paragrafta "ana düşünce" ile ilgili aşağıdakilerden hangisi doğrudur?',secenekler:["Ana düşünce her zaman ilk cümlede yer alır.","Ana düşünce yalnızca son cümlede bulunur.","Ana düşünce paragrafın tamamına yayılmış temel fikirdir.","Ana düşünce paragrafta açıkça belirtilmek zorundadır."],cevap:2},
+  {ders:"Türkçe",konu:"Yazım Kuralları",soru:"Aşağıdaki cümlelerin hangisinde yazım yanlışı vardır?",secenekler:["Ankara'da yaşıyorum.","Türkçe dersinde başarılıyım.","Kitabı masanın üstüne koydum.","Bu iş'i yarın bitireceğim."],cevap:3},
+  {ders:"Türkçe",konu:"Noktalama",soru:"Aşağıdaki cümlelerin hangisinde noktalama işareti yanlış kullanılmıştır?",secenekler:["Bugün hava güzeldi, dışarı çıktık.","Ali, Veli ve Ayşe birlikte geldiler.","Sınav zor muydu, diye sordu?","Toplantı sona erdi; herkes dağıldı."],cevap:2},
+  {ders:"Türkçe",konu:"Ses Bilgisi",soru:"Aşağıdaki sözcüklerin hangisinde ünsüz yumuşaması vardır?",secenekler:["Kitap → kitabı","Masa → masası","Araba → arabası","Kalem → kalemi"],cevap:0},
+  {ders:"Türkçe",konu:"Sözcük Türleri",soru:'"Çalışkan öğrenci sınavı kolaylıkla geçti." cümlesinde kaç tane sıfat vardır?',secenekler:["1","2","3","4"],cevap:0},
+  {ders:"Türkçe",konu:"Cümle Bilgisi",soru:"Aşağıdaki cümlelerin hangisi basit cümledir?",secenekler:["Yağmur yağdı ve sokaklar ıslandı.","Hava soğuk olduğu için dışarı çıkmadım.","Kitabı okuyup rafa kaldırdı.","Kardeşim bugün erken kalktı."],cevap:3},
+  {ders:"Türkçe",konu:"Sözcükte Anlam",soru:'"Kapıyı çalmak" deyiminin anlamı aşağıdakilerden hangisidir?',secenekler:["Kapıyı kırmak","Bir yere başvurmak ya da yardım istemek","Kapıyı gürültüyle açmak","Birini ziyarete gitmek"],cevap:1},
+  {ders:"Türkçe",konu:"Paragraf",soru:'Bir metinde geçen düşünceyi geliştirme yollarından biri olan "tanımlama" için aşağıdakilerden hangisi söylenebilir?',secenekler:["Bir olayı zamanla ilişkilendirir.","Bir kavramın ne olduğunu açıklar.","İki kavramı karşılaştırır.","Somut örnekler verir."],cevap:1},
+  // MATEMATİK
+  {ders:"Matematik",konu:"Temel Sayılar",soru:"144'ün pozitif tam sayı bölenlerinin sayısı kaçtır?",secenekler:["12","13","14","15"],cevap:1},
+  {ders:"Matematik",konu:"EBOB-EKOK",soru:"EBOB(36, 48) × EKOK(36, 48) kaçtır?",secenekler:["1728","1628","1528","1428"],cevap:0},
+  {ders:"Matematik",konu:"Kesirler",soru:"3/4 + 5/6 işleminin sonucu kaçtır?",secenekler:["8/10","19/12","8/12","13/10"],cevap:1},
+  {ders:"Matematik",konu:"Oran-Orantı",soru:"Bir arabanın 4 saatte aldığı yol 240 km ise aynı hızla 7 saatte kaç km yol alır?",secenekler:["380","400","420","440"],cevap:2},
+  {ders:"Matematik",konu:"Yüzde",soru:"400 liranın %35'i kaç liradır?",secenekler:["120","130","140","150"],cevap:2},
+  {ders:"Matematik",konu:"Kar-Zarar",soru:"Bir ürün 600 TL'ye alınıp 750 TL'ye satılmıştır. Kâr yüzdesi nedir?",secenekler:["20%","25%","30%","35%"],cevap:1},
+  {ders:"Matematik",konu:"Hız-Yol-Zaman",soru:"Saatte 80 km hızla giden bir araç 3,5 saatte kaç km yol alır?",secenekler:["260","270","280","290"],cevap:2},
+  {ders:"Matematik",konu:"Bölünebilme",soru:"Aşağıdaki sayıların hangisi hem 4'e hem de 6'ya tam bölünür?",secenekler:["34","48","50","56"],cevap:1},
+  {ders:"Matematik",konu:"Olasılık",soru:"Bir torbada 3 kırmızı 5 mavi top vardır. Rastgele çekilen topun kırmızı olma olasılığı nedir?",secenekler:["3/8","5/8","3/5","1/3"],cevap:0},
+  {ders:"Matematik",konu:"Veri Analizi",soru:"5 öğrencinin sınav puanları: 70, 80, 90, 60, 100. Bu puanların aritmetik ortalaması kaçtır?",secenekler:["78","79","80","81"],cevap:2},
+  // TARİH
+  {ders:"Tarih",konu:"Osmanlı Kuruluş",soru:"Osmanlı Devleti'nin kurucusu kimdir?",secenekler:["Orhan Bey","Osman Bey","Alaeddin Bey","Ertuğrul Bey"],cevap:1},
+  {ders:"Tarih",konu:"Osmanlı Yükselme",soru:"İstanbul'un Fethi hangi yılda gerçekleşmiştir?",secenekler:["1451","1452","1453","1454"],cevap:2},
+  {ders:"Tarih",konu:"Osmanlı Yükselme",soru:"Kanuni Sultan Süleyman döneminde yapılan Mohaç Savaşı hangi ülkeye karşı kazanılmıştır?",secenekler:["Avusturya","Venedik","Macaristan","Polonya"],cevap:2},
+  {ders:"Tarih",konu:"Osmanlı Gerileme",soru:"Karlofça Antlaşması (1699) hangi savaşın sonunda imzalanmıştır?",secenekler:["Otuz Yıl Savaşları","Kutsal İttifak Savaşları","Osmanlı-Venedik Savaşı","Osmanlı-Rus Savaşı"],cevap:1},
+  {ders:"Tarih",konu:"Kurtuluş Savaşı",soru:"Amasya Genelgesi kaç yılında yayımlanmıştır?",secenekler:["1918","1919","1920","1921"],cevap:1},
+  {ders:"Tarih",konu:"Kurtuluş Savaşı",soru:"Türkiye Büyük Millet Meclisi hangi tarihte açılmıştır?",secenekler:["19 Mayıs 1919","23 Nisan 1920","29 Ekim 1923","1 Kasım 1922"],cevap:1},
+  {ders:"Tarih",konu:"Cumhuriyet Reformları",soru:"Harf İnkılabı hangi yılda gerçekleştirilmiştir?",secenekler:["1924","1926","1928","1930"],cevap:2},
+  {ders:"Tarih",konu:"Atatürk İlkeleri",soru:"Aşağıdakilerden hangisi Atatürk'ün 6 ilkesinden biri değildir?",secenekler:["Cumhuriyetçilik","Milliyetçilik","Federalizm","Laiklik"],cevap:2},
+  {ders:"Tarih",konu:"Cumhuriyet Reformları",soru:"Türkiye'de çok partili siyasi hayata geçişte kurulan ilk muhalefet partisi aşağıdakilerden hangisidir?",secenekler:["Terakkiperver Cumhuriyet Fırkası","Serbest Cumhuriyet Fırkası","Demokrat Parti","Halk Partisi"],cevap:0},
+  {ders:"Tarih",konu:"Yakın Dönem",soru:"Türkiye hangi yılda NATO'ya üye olmuştur?",secenekler:["1949","1950","1952","1955"],cevap:2},
+  // COĞRAFYA
+  {ders:"Coğrafya",konu:"Konumu",soru:"Türkiye kaç komşu ülkeyle kara sınırına sahiptir?",secenekler:["6","7","8","9"],cevap:2},
+  {ders:"Coğrafya",konu:"İklim",soru:"Akdeniz ikliminin görüldüğü bölgede yaz mevsimiyle ilgili aşağıdakilerden hangisi doğrudur?",secenekler:["Yazlar serin ve yağışlıdır.","Yazlar sıcak ve kuraktır.","Yazlar ılık ve yağışlıdır.","Yazlar soğuk ve karlıdır."],cevap:1},
+  {ders:"Coğrafya",konu:"Nüfus",soru:"Türkiye'nin en kalabalık şehri aşağıdakilerden hangisidir?",secenekler:["Ankara","İstanbul","İzmir","Bursa"],cevap:1},
+  {ders:"Coğrafya",konu:"Ekonomik",soru:"Türkiye'de en fazla pamuk üretimi hangi bölgede yapılır?",secenekler:["Karadeniz","İç Anadolu","Ege","Doğu Anadolu"],cevap:2},
+  {ders:"Coğrafya",konu:"Bölgeler",soru:"Türkiye'nin yüzölçümü en büyük bölgesi hangisidir?",secenekler:["İç Anadolu","Doğu Anadolu","Karadeniz","Güneydoğu Anadolu"],cevap:1},
+  {ders:"Coğrafya",konu:"Harita",soru:"1/100.000 ölçekli haritada 2 cm'lik uzunluk gerçekte kaç km'ye karşılık gelir?",secenekler:["1 km","2 km","5 km","10 km"],cevap:1},
+  {ders:"Coğrafya",konu:"İklim",soru:"Karadeniz Bölgesi'nin iklim özelliği için aşağıdakilerden hangisi doğrudur?",secenekler:["Her mevsim yağışlı ve ılımandır.","Yazlar kurak kışlar karlıdır.","Yıllık sıcaklık farkı çok yüksektir.","Yağış miktarı çok azdır."],cevap:0},
+  {ders:"Coğrafya",konu:"Nüfus",soru:"Türkiye'de nüfusun en seyrek olduğu bölge aşağıdakilerden hangisidir?",secenekler:["Ege","Karadeniz","Doğu Anadolu","İç Anadolu"],cevap:2},
+  {ders:"Coğrafya",konu:"Ekonomik",soru:"Türkiye'nin en önemli turizm geliri hangi bölgeden sağlanır?",secenekler:["Karadeniz","Akdeniz","Doğu Anadolu","İç Anadolu"],cevap:1},
+  {ders:"Coğrafya",konu:"Bölgeler",soru:"Fındık üretiminde Türkiye'nin en önemli bölgesi hangisidir?",secenekler:["Ege","Marmara","Karadeniz","Akdeniz"],cevap:2},
+  // VATANDAŞLIK
+  {ders:"Vatandaşlık",konu:"Anayasa",soru:"Türkiye Cumhuriyeti Anayasası'na göre devletin resmi dili aşağıdakilerden hangisidir?",secenekler:["Osmanlıca","Türkçe","Kürtçe","Arapça"],cevap:1},
+  {ders:"Vatandaşlık",konu:"Temel Haklar",soru:"Anayasaya göre aşağıdakilerden hangisi temel haklar arasında yer almaz?",secenekler:["Yaşam hakkı","Eğitim hakkı","Mülkiyet hakkı","Sınırsız ifade özgürlüğü"],cevap:3},
+  {ders:"Vatandaşlık",konu:"Yasama",soru:"TBMM kaç milletvekilinden oluşur?",secenekler:["450","500","550","600"],cevap:2},
+  {ders:"Vatandaşlık",konu:"Yasama",soru:"Türkiye'de milletvekili seçilebilmek için asgari yaş kaçtır?",secenekler:["21","23","25","27"],cevap:2},
+  {ders:"Vatandaşlık",konu:"Yürütme",soru:"Cumhurbaşkanı kaç yıllık süre için seçilir?",secenekler:["4","5","6","7"],cevap:1},
+  {ders:"Vatandaşlık",konu:"Yargı",soru:"Anayasa Mahkemesi kaç üyeden oluşur?",secenekler:["12","13","15","17"],cevap:2},
+  {ders:"Vatandaşlık",konu:"Yerel Yönetimler",soru:"Aşağıdakilerden hangisi yerel yönetim birimi değildir?",secenekler:["Büyükşehir belediyesi","İl özel idaresi","Köy","Bakanlık"],cevap:3},
+  {ders:"Vatandaşlık",konu:"Anayasa",soru:"Türkiye Cumhuriyeti'nin yönetim biçimi anayasada nasıl tanımlanır?",secenekler:["Federal devlet","Üniter devlet","Konfederasyon","Monarşi"],cevap:1},
+  {ders:"Vatandaşlık",konu:"Temel Haklar",soru:"Seçme ve seçilme hakkı için anayasada öngörülen minimum yaş aşağıdakilerden hangisidir?",secenekler:["16","17","18","21"],cevap:2},
+  {ders:"Vatandaşlık",konu:"Yürütme",soru:"Cumhurbaşkanlığı hükümet sistemine geçiş hangi yılda gerçekleşmiştir?",secenekler:["2016","2017","2018","2019"],cevap:2},
+];
+
+// ════════════════════════════════════════
+//  VERİ YÖNETİMİ (localStorage)
+// ════════════════════════════════════════
+function kaydet(key, val) { try { localStorage.setItem('kpss_'+key, JSON.stringify(val)); } catch(e){} }
+function yukle(key, def)  { try { const v = localStorage.getItem('kpss_'+key); return v ? JSON.parse(v) : def; } catch(e){ return def; } }
+
+let istatistik = yukle('istatistik', {});
+let yanlislar  = yukle('yanlislar', []);
+
+// ════════════════════════════════════════
+//  TEST STATE
+// ════════════════════════════════════════
+let mevcutSorular = [];
+let mevcutIndex   = 0;
+let dogru = 0, yanlis = 0;
+let cevapVerildi  = false;
+let mevcutMod     = ''; // 'konu' | 'deneme' | 'yanlis'
+let mevcutDers    = '';
+let timerInterval = null;
+let kalanSaniye   = 3600;
+
+const DERS_META = {
+  "Türkçe":      { renk: "#7c6cfc", cls: "ders-turkce",      emoji: "📘" },
+  "Matematik":   { renk: "#4ecb8d", cls: "ders-matematik",   emoji: "🔢" },
+  "Tarih":       { renk: "#fc6c8f", cls: "ders-tarih",       emoji: "🏛️" },
+  "Coğrafya":    { renk: "#4eb8fc", cls: "ders-cografya",    emoji: "🗺️" },
+  "Vatandaşlık": { renk: "#fcc04e", cls: "ders-vatandaslik", emoji: "⚖️" },
+};
+
+// ════════════════════════════════════════
+//  EKRAN YÖNETİMİ
+// ════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showMenu() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  guncelleMenuStats();
+  showScreen('screen-menu');
+}
+
+function showDersler() {
+  renderDersGrid();
+  showScreen('screen-dersler');
+}
+
+function showIstatistik() {
+  renderIstatistik();
+  showScreen('screen-istatistik');
+}
+
+function showYanlislar() {
+  renderYanlislar();
+  showScreen('screen-yanlislar');
+}
+
+function showDeneme() {
+  if (timerInterval) clearInterval(timerInterval);
+  kalanSaniye = 3600;
+  document.getElementById('timer-val').textContent = formatTime(kalanSaniye);
+  document.getElementById('timer-val').classList.remove('timer-kirmizi');
+  showScreen('screen-deneme');
+}
+
+// ════════════════════════════════════════
+//  MENÜ STATS
+// ════════════════════════════════════════
+function guncelleMenuStats() {
+  let toplam = 0, yanlisSayi = yanlislar.length;
+  let cozulen = 0;
+  Object.values(istatistik).forEach(d => { cozulen += (d.dogru||0) + (d.yanlis||0); });
+  document.getElementById('stat-cozulen').textContent = cozulen;
+  document.getElementById('stat-yanlis-sayi').textContent = yanlisSayi;
+
+  const badge = document.getElementById('yanlis-badge');
+  if (yanlisSayi > 0) {
+    badge.style.display = 'inline';
+    badge.textContent = yanlisSayi;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════
+//  DERS GRİD
+// ════════════════════════════════════════
+function renderDersGrid() {
+  const grid = document.getElementById('ders-grid');
+  const dersler = [...new Set(SORULAR.map(s => s.ders))];
+  grid.innerHTML = dersler.map(ders => {
+    const meta = DERS_META[ders];
+    const count = SORULAR.filter(s => s.ders === ders).length;
+    const ist = istatistik[ders] || { dogru:0, yanlis:0 };
+    const toplam = ist.dogru + ist.yanlis;
+    const oran = toplam > 0 ? Math.round(ist.dogru / toplam * 100) : 0;
+    return `
+      <div class="ders-card ${meta.cls}" onclick="baslaTest('${ders}')">
+        <div class="ders-card-icon">${meta.emoji}</div>
+        <div class="ders-card-info">
+          <div class="ders-card-name">${ders}</div>
+          <div class="ders-card-count">${count} soru · ${toplam > 0 ? oran+'% başarı' : 'Henüz çözülmedi'}</div>
+          <div class="ders-card-progress">
+            <div class="ders-card-progress-fill" style="width:${oran}%"></div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+//  TEST BAŞLAT
+// ════════════════════════════════════════
+function karistir(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function baslaTest(ders) {
+  mevcutMod  = 'konu';
+  mevcutDers = ders;
+  mevcutSorular = karistir(SORULAR.filter(s => s.ders === ders));
+  mevcutIndex = dogru = yanlis = 0;
+  showScreen('screen-test');
+  soruGoster();
+}
+
+function baslaDeneme() {
+  mevcutMod  = 'deneme';
+  mevcutDers = 'Deneme';
+  mevcutSorular = karistir(SORULAR).slice(0, 50);
+  mevcutIndex = dogru = yanlis = 0;
+  kalanSaniye = 3600;
+  showScreen('screen-test');
+  soruGoster();
+  timerInterval = setInterval(() => {
+    kalanSaniye--;
+    // timer badge in header
+    const badge = document.getElementById('test-ders-badge');
+    badge.textContent = '⏱ ' + formatTime(kalanSaniye);
+    if (kalanSaniye <= 300) badge.style.background = 'rgba(252,92,92,0.2)';
+    if (kalanSaniye <= 0) { clearInterval(timerInterval); showSonuc(); }
+  }, 1000);
+}
+
+function baslaYanlis() {
+  if (yanlislar.length === 0) return;
+  mevcutMod  = 'yanlis';
+  mevcutDers = 'Yanlış Sorular';
+  mevcutSorular = karistir(yanlislar);
+  mevcutIndex = dogru = yanlis = 0;
+  showScreen('screen-test');
+  soruGoster();
+}
+
+// ════════════════════════════════════════
+//  SORU GÖSTER
+// ════════════════════════════════════════
+function soruGoster() {
+  const s = mevcutSorular[mevcutIndex];
+  cevapVerildi = false;
+
+  // header
+  const meta = DERS_META[s.ders] || { renk:'#7c6cfc' };
+  const badge = document.getElementById('test-ders-badge');
+  if (mevcutMod !== 'deneme') {
+    badge.textContent = s.ders;
+    badge.style.background = meta.renk + '33';
+    badge.style.color = meta.renk;
+  }
+
+  document.getElementById('test-sayac').textContent = `${mevcutIndex+1} / ${mevcutSorular.length}`;
+  const pct = ((mevcutIndex+1) / mevcutSorular.length * 100).toFixed(1);
+  document.getElementById('test-progress-fill').style.width = pct + '%';
+
+  document.getElementById('soru-no').textContent = `Soru ${mevcutIndex+1}`;
+  document.getElementById('soru-text').textContent = s.soru;
+
+  const harfler = ['A','B','C','D'];
+  document.getElementById('secenekler').innerHTML = s.secenekler.map((opt, i) => `
+    <div class="secenek" id="sec-${i}" onclick="cevapSec(${i})">
+      <div class="secenek-harf">${harfler[i]}</div>
+      <div>${opt}</div>
+    </div>`).join('');
+
+  document.getElementById('btn-sonraki').style.display = 'none';
+}
+
+// ════════════════════════════════════════
+//  CEVAP SEÇ
+// ════════════════════════════════════════
+function cevapSec(secilen) {
+  if (cevapVerildi) return;
+  cevapVerildi = true;
+
+  const s = mevcutSorular[mevcutIndex];
+  const dogru_idx = s.cevap;
+
+  // tüm seçenekleri pasif yap
+  document.querySelectorAll('.secenek').forEach(el => el.classList.add('disabled'));
+
+  if (secilen === dogru_idx) {
+    document.getElementById('sec-'+secilen).classList.add('dogru');
+    dogru++;
+    istatGuncelle(s.ders, true);
+    // yanlışlardan sil (eğer varsa)
+    yanlislar = yanlislar.filter(y => y.soru !== s.soru);
+    kaydet('yanlislar', yanlislar);
+  } else {
+    document.getElementById('sec-'+secilen).classList.add('yanlis');
+    document.getElementById('sec-'+dogru_idx).classList.add('dogru');
+    yanlis++;
+    istatGuncelle(s.ders, false);
+    // yanlışlara ekle (duplicate olmasın)
+    if (!yanlislar.find(y => y.soru === s.soru)) {
+      yanlislar.push(s);
+      kaydet('yanlislar', yanlislar);
+    }
+  }
+
+  const btn = document.getElementById('btn-sonraki');
+  btn.style.display = 'block';
+  if (mevcutIndex === mevcutSorular.length - 1) {
+    btn.textContent = 'Sonuçları Gör →';
+  }
+}
+
+// ════════════════════════════════════════
+//  SONRAKİ SORU
+// ════════════════════════════════════════
+function sonraki() {
+  mevcutIndex++;
+  if (mevcutIndex >= mevcutSorular.length) {
+    showSonuc();
+  } else {
+    soruGoster();
+  }
+}
+
+// ════════════════════════════════════════
+//  SONUÇ
+// ════════════════════════════════════════
+function showSonuc() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  const toplam = mevcutSorular.length;
+  const oran   = Math.round(dogru / toplam * 100);
+  const net    = (dogru - yanlis/4).toFixed(2);
+
+  let emoji = oran >= 80 ? '🎉' : oran >= 60 ? '👍' : oran >= 40 ? '📖' : '💪';
+  let label = oran >= 80 ? 'Mükemmel!' : oran >= 60 ? 'İyi gidiyorsun' : oran >= 40 ? 'Biraz daha çalış' : 'Devam et!';
+
+  document.getElementById('sonuc-emoji').textContent = emoji;
+  document.getElementById('sonuc-puan').textContent  = '%' + oran;
+  document.getElementById('sonuc-puan').style.color  = oran >= 60 ? 'var(--green)' : oran >= 40 ? 'var(--yellow)' : 'var(--red)';
+  document.getElementById('sonuc-label').textContent = label + ' · ' + toplam + ' sorudan ' + dogru + ' doğru';
+  document.getElementById('sonuc-dogru').textContent = dogru;
+  document.getElementById('sonuc-yanlis').textContent = yanlis;
+  document.getElementById('sonuc-net').textContent   = net;
+
+  showScreen('screen-sonuc');
+}
+
+function tekrar() {
+  if (mevcutMod === 'konu')   baslaTest(mevcutDers);
+  else if (mevcutMod === 'deneme') baslaDeneme();
+  else if (mevcutMod === 'yanlis') baslaYanlis();
+}
+
+// ════════════════════════════════════════
+//  İSTATİSTİK
+// ════════════════════════════════════════
+function istatGuncelle(ders, isDogru) {
+  if (!istatistik[ders]) istatistik[ders] = { dogru:0, yanlis:0 };
+  if (isDogru) istatistik[ders].dogru++;
+  else         istatistik[ders].yanlis++;
+  kaydet('istatistik', istatistik);
+}
+
+function renderIstatistik() {
+  const grid = document.getElementById('istat-grid');
+  const dersler = [...new Set(SORULAR.map(s => s.ders))];
+
+  if (Object.keys(istatistik).length === 0) {
+    grid.innerHTML = '<div class="bos-state"><div class="bos-emoji">📊</div><div class="bos-text">Henüz soru çözmedin. İstatistik burada görünecek.</div></div>';
+    return;
+  }
+
+  grid.innerHTML = dersler.map(ders => {
+    const ist  = istatistik[ders] || { dogru:0, yanlis:0 };
+    const top  = ist.dogru + ist.yanlis;
+    const oran = top > 0 ? Math.round(ist.dogru / top * 100) : 0;
+    const meta = DERS_META[ders];
+    return `
+      <div class="istat-card">
+        <div class="istat-header">
+          <span class="istat-ders">${meta.emoji} ${ders}</span>
+          <span class="istat-oran" style="color:${meta.renk}">${oran}%</span>
+        </div>
+        <div class="istat-bar">
+          <div class="istat-bar-fill" style="width:${oran}%;background:${meta.renk}"></div>
+        </div>
+        <div class="istat-alt">
+          <span><span class="dot-g"></span>${ist.dogru} doğru</span>
+          <span><span class="dot-r"></span>${ist.yanlis} yanlış</span>
+          <span>${top} toplam</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+//  YANLIŞ SORULAR
+// ════════════════════════════════════════
+function renderYanlislar() {
+  const content = document.getElementById('yanlis-content');
+  const sub = document.getElementById('yanlis-sub');
+
+  if (yanlislar.length === 0) {
+    sub.textContent = '';
+    content.innerHTML = '<div class="bos-state"><div class="bos-emoji">✅</div><div class="bos-text">Harika! Hiç yanlış sorun yok.</div></div>';
+    return;
+  }
+
+  sub.textContent = yanlislar.length + ' soru tekrar bekliyor';
+  content.innerHTML = `<button class="btn-primary" onclick="baslaYanlis()" style="margin-bottom:16px">Yanlış Soruları Çöz (${yanlislar.length})</button>`;
+}
+
+// ════════════════════════════════════════
+//  YARDIMCI
+// ════════════════════════════════════════
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sn = s % 60;
+  return String(m).padStart(2,'0') + ':' + String(sn).padStart(2,'0');
+}
+
+// İlk yüklemede
+guncelleMenuStats();
+</script>
+</body>
+</html>
